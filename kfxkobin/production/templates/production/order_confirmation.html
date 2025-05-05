@@ -1,0 +1,152 @@
+{% extends 'production/base.html' %}
+
+{% block title %}Подтверждение заказа - kfxkobin.ru{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #007bff;
+        --secondary-color: #6c757d;
+        --light-color: #f8f9fa;
+        --dark-color: #343a40;
+        --success-color: #28a745;
+        --danger-color: #dc3545;
+        --border-radius: 0.5rem;
+        --box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        --transition: all 0.3s ease-in-out;
+    }
+
+    .confirmation-container {
+        padding: 2rem 5%;
+        background-color: var(--light-color);
+        position: relative; /* Для позиционирования плавающих элементов */
+        overflow: hidden; /* Чтобы плавающие элементы не выходили за границы */
+    }
+
+    .confirmation-title {
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+        color: var(--dark-color);
+        position: relative;
+    }
+
+    .confirmation-title::after {
+        content: '';
+        position: absolute;
+        bottom: -0.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4rem;
+        height: 0.25rem;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        border-radius: 0.125rem;
+    }
+
+    .confirmation-message {
+        text-align: center;
+        font-size: 1.2rem;
+        color: var(--dark-color);
+        margin-bottom: 1.5rem;
+    }
+
+    .order-details-container {
+        background-color: #fff;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .order-details-title {
+        font-size: 1.5rem;
+        color: var(--dark-color);
+        margin-bottom: 1rem;
+    }
+
+    .order-items-list {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .order-items-list li {
+        font-size: 1rem;
+        color: #555;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .order-items-list li:last-child {
+        border-bottom: none;
+    }
+
+    .total-cost {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--primary-color);
+        text-align: right;
+        padding-top: 1rem;
+    }
+
+    .thank-you-message {
+        text-align: center;
+        font-size: 1.1rem;
+        color: var(--secondary-color);
+        margin-top: 2rem;
+    }
+
+    /* Плавающие элементы для дизайна */
+    .floating-element {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.2;
+        z-index: 1;
+    }
+
+    .floating-element:nth-child(1) {
+        width: 120px;
+        height: 120px;
+        background: var(--primary-color);
+        top: 10%;
+        left: 5%;
+        animation: float 8s ease-in-out infinite;
+    }
+
+    .floating-element:nth-child(2) {
+        width: 160px;
+        height: 160px;
+        background: var(--secondary-color);
+        bottom: 10%;
+        right: 5%;
+        animation: float 10s ease-in-out infinite 2s;
+    }
+
+    @keyframes float {
+        0% { transform: translateY(0) rotate(0deg); }
+        50% { transform: translateY(-15px) rotate(5deg); }
+        100% { transform: translateY(0) rotate(0deg); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+
+    <section class="confirmation-container">
+        <h2 class="confirmation-title">Подтверждение заказа</h2>
+        <p class="confirmation-message">Спасибо за ваш заказ! Номер вашего заказа: <strong>{{ order.id }}</strong></p>
+
+        <div class="order-details-container">
+            <h3 class="order-details-title">Детали заказа:</h3>
+            <ul class="order-items-list">
+                {% for item in order.items.all %}
+                    <li>{{ item.product.name }} ({{ item.quantity }} x {{ item.price }} руб.) - Итого: {{ item.get_cost }} руб.</li>
+                {% endfor %}
+            </ul>
+            <p class="total-cost">Общая стоимость: {{ order.get_total_cost }} руб.</p>
+        </div>
+
+        <p class="thank-you-message">Ваш заказ будет обработан в ближайшее время.</p>
+    </section>
+{% endblock %}

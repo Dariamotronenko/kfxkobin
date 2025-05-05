@@ -1,0 +1,41 @@
+.partners {
+    padding: 40px 0;
+    text-align: center;
+}
+
+.partners h2 {
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.partners-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px; /* Расстояние между логотипами */
+}
+
+.partner-logo {
+    width: 150px; /* Примерная ширина логотипа */
+    height: auto;
+    overflow: hidden; /* Обрезаем выходящие за границы эффекты */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Плавные переходы */
+    border-radius: 5px; /* Небольшое скругление углов */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Легкая тень */
+}
+
+.partner-logo img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: opacity 0.3s ease-in-out; /* Плавное изменение прозрачности */
+}
+
+.partner-logo:hover {
+    transform: scale(1.05); /* Небольшое увеличение при наведении */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Более выраженная тень при наведении */
+}
+
+.partner-logo:hover img {
+    opacity: 0.8; /* Небольшое затемнение изображения при наведении */
+}

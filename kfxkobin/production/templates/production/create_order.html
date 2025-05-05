@@ -1,0 +1,143 @@
+{% extends 'production/base.html' %}
+
+{% block title %}Оформление заказа - kfxkobin.ru{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #007bff;
+        --secondary-color: #6c757d;
+        --light-color: #f8f9fa;
+        --dark-color: #343a40;
+        --success-color: #28a745;
+        --danger-color: #dc3545;
+        --border-radius: 0.5rem;
+        --box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        --transition: all 0.3s ease-in-out;
+    }
+
+    .order-container {
+        padding: 2rem 5%;
+        background-color: var(--light-color);
+    }
+
+    .order-title {
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+        color: var(--dark-color);
+        position: relative;
+    }
+
+    .order-title::after {
+        content: '';
+        position: absolute;
+        bottom: -0.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4rem;
+        height: 0.25rem;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        border-radius: 0.125rem;
+    }
+
+    .order-form-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        background-color: #fff;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        padding: 1.5rem;
+    }
+
+    .order-form h3 {
+        font-size: 1.5rem;
+        color: var(--dark-color);
+        margin-bottom: 1rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.2rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--secondary-color);
+        font-weight: bold;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group input[type="tel"],
+    .form-group textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ced4da;
+        border-radius: var(--border-radius);
+        font-size: 1rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    .form-group input[type="text"]:focus,
+    .form-group input[type="email"]:focus,
+    .form-group input[type="tel"]:focus,
+    .form-group textarea:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        outline: 0;
+    }
+
+    .order-button {
+        display: block;
+        width: 100%;
+        padding: 0.75rem 1.5rem;
+        background: linear-gradient(45deg, var(--primary-color), #0056b3);
+        color: white;
+        border: none;
+        border-radius: 30px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
+    }
+
+    .order-button:hover {
+        background: linear-gradient(45deg, #0056b3, var(--primary-color));
+        transform: translateY(-3px);
+    }
+
+    .cart-empty-message {
+        text-align: center;
+        padding: 2rem;
+        font-size: 1.2rem;
+        color: var(--secondary-color);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <section class="order-container">
+        <h2 class="order-title">Оформление заказа</h2>
+        {% if cart and cart.items.count > 0 %}
+            <div class="order-form-container">
+                <form method="post" class="order-form">
+                    {% csrf_token %}
+                    <h3>Детали доставки</h3>
+                    {% for field in form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="error">{{ field.errors }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="order-button">Подтвердить заказ</button>
+                </form>
+            </div>
+        {% else %}
+            <p class="cart-empty-message">Ваша корзина пуста. Пожалуйста, добавьте товары в корзину, прежде чем оформлять заказ.</p>
+        {% endif %}
+    </section>
+{% endblock %}

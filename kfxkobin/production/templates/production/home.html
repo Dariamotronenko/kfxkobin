@@ -1,0 +1,628 @@
+{% extends 'production/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #e74c3c;
+        --secondary-color: #2ecc71;
+        --accent-color: #f1c40f;
+        --dark-color: #2c3e50;
+        --light-color: #ecf0f1;
+    }
+
+    body {
+        font-family: 'Roboto', sans-serif;
+        overflow-x: hidden;
+        color: #333;
+    }
+
+    /* Hero section with animated gradient */
+    .hero {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+        background-size: 400% 400%;
+        animation: gradient 15s ease infinite;
+    }
+
+    @keyframes gradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80') no-repeat center center;
+        background-size: cover;
+        opacity: 0.3;
+    }
+
+    .hero h1 {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        animation: fadeInDown 1s ease;
+    }
+
+    .hero p {
+        font-size: 1.5rem;
+        max-width: 800px;
+        margin: 0 auto 2rem;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        animation: fadeInUp 1s ease 0.3s both;
+    }
+
+    /* Section styling with parallax and collisions */
+    section {
+        padding: 100px 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    section:nth-child(odd) {
+        background-color: var(--light-color);
+    }
+
+    section:nth-child(even) {
+        background-color: white;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+        position: relative;
+        z-index: 2;
+    }
+
+    h2 {
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+        color: var(--dark-color);
+        position: relative;
+        display: inline-block;
+    }
+
+    h2::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.5s ease;
+    }
+
+    section.in-view h2::after {
+        transform: scaleX(1);
+    }
+
+    /* Company info with floating elements */
+    .company-info {
+        text-align: center;
+    }
+
+    .company-info p {
+        font-size: 1.2rem;
+        line-height: 1.6;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background: rgba(255,255,255,0.9);
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        transform: translateY(50px);
+        opacity: 0;
+        transition: all 0.8s ease;
+    }
+
+    section.in-view .company-info p {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    /* Partners section with hover effects */
+    .partners {
+        text-align: center;
+    }
+
+    .partners-logos {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 40px;
+        margin-top: 50px;
+    }
+
+    .partners-logos img {
+        height: 80px;
+        filter: grayscale(100%);
+        opacity: 0.7;
+        transition: all 0.3s ease;
+        transform: scale(0.9);
+    }
+
+    .partners-logos img:hover {
+        filter: grayscale(0%);
+        opacity: 1;
+        transform: scale(1.1);
+    }
+
+    /* Collaboration section with floating images */
+    .collaboration {
+        text-align: center;
+    }
+
+    .collaboration-images {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 30px;
+        margin-top: 50px;
+    }
+
+    .collaboration-images img {
+        width: 45%;
+        max-width: 500px;
+        border-radius: 10px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        transition: all 0.5s ease;
+        transform: translateY(20px) rotate(2deg);
+        opacity: 0;
+    }
+
+    .collaboration-images img:nth-child(2) {
+        transform: translateY(20px) rotate(-2deg);
+    }
+
+    section.in-view .collaboration-images img {
+        transform: translateY(0) rotate(0);
+        opacity: 1;
+    }
+
+    /* Equipment section with animated list */
+    .equipment {
+        text-align: center;
+    }
+
+    .equipment ul {
+        list-style: none;
+        padding: 0;
+        max-width: 600px;
+        margin: 50px auto 0;
+    }
+
+    .equipment li {
+        font-size: 1.3rem;
+        padding: 15px 20px;
+        margin: 10px 0;
+        background: white;
+        border-radius: 50px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        position: relative;
+        overflow: hidden;
+        transform: translateX(-100%);
+        opacity: 0;
+        transition: all 0.5s ease;
+    }
+
+    .equipment li::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 5px;
+        height: 100%;
+        background: var(--primary-color);
+    }
+
+    section.in-view .equipment li {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    section.in-view .equipment li:nth-child(1) { transition-delay: 0.1s; }
+    section.in-view .equipment li:nth-child(2) { transition-delay: 0.3s; }
+    section.in-view .equipment li:nth-child(3) { transition-delay: 0.5s; }
+
+    /* Комбайны */
+    .combines {
+        text-align: center;
+        padding: 60px 0;
+        background-color: var(--light-color);
+    }
+
+    .combines h2 {
+        margin-bottom: 30px;
+    }
+
+    .combines-list {
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        flex-wrap: wrap;
+    }
+
+    .combine-item {
+        width: 300px;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .combine-item:hover {
+        transform: scale(1.03);
+    }
+
+    .combine-item img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .combine-info {
+        padding: 20px;
+        text-align: center;
+    }
+
+    .combine-info h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        color: var(--dark-color);
+    }
+
+    .combine-info p {
+        font-size: 1rem;
+        line-height: 1.4;
+        color: #555;
+    }
+
+    /* About us with rotating border */
+    .about-us p {
+        font-size: 1.2rem;
+        line-height: 1.8;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 30px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        position: relative;
+    }
+
+    .about-us p::after {
+        content: '';
+        position: absolute;
+        top: -10px;
+        left: -10px;
+        right: -10px;
+        bottom: -10px;
+        border: 2px dashed var(--accent-color);
+        border-radius: 15px;
+        z-index: -1;
+        animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Science tech with button hover */
+    .science-tech-preview {
+        text-align: center;
+    }
+
+    .science-tech-images {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 30px;
+        margin: 50px 0;
+    }
+
+    .science-tech-images img {
+        width: 45%;
+        max-width: 500px;
+        border-radius: 10px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        transition: all 0.5s ease;
+    }
+
+    .science-tech-images img:hover {
+        transform: scale(1.05);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+
+    .button {
+        display: inline-block;
+        padding: 15px 30px;
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .button:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    }
+
+    .button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: 0.5s;
+    }
+
+    .button:hover::before {
+        left: 100%;
+    }
+
+    /* Floating elements */
+    .floating-element {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.3;
+        z-index: 1;
+    }
+
+    .floating-element:nth-child(1) {
+        width: 100px;
+        height: 100px;
+        background: var(--primary-color);
+        top: 20%;
+        left: 10%;
+        animation: float 8s ease-in-out infinite;
+    }
+
+    .floating-element:nth-child(2) {
+        width: 150px;
+        height: 150px;
+        background: var(--secondary-color);
+        bottom: 15%;
+        right: 10%;
+        animation: float 10s ease-in-out infinite 2s;
+    }
+
+    .floating-element:nth-child(3) {
+        width: 70px;
+        height: 70px;
+        background: var(--accent-color);
+        top: 60%;
+        left: 30%;
+        animation: float 7s ease-in-out infinite 1s;
+    }
+
+    @keyframes float {
+        0% { transform: translateY(0) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(10deg); }
+        100% { transform: translateY(0) rotate(0deg); }
+    }
+
+    /* Animations */
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .hero h1 {
+            font-size: 2.5rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+        }
+
+        .collaboration-images img,
+        .science-tech-images img {
+            width: 100%;
+        }
+
+        .partners-logos {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .combines-list {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .combine-item {
+            width: 80%;
+            max-width: 400px;
+            margin-bottom: 30px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Добро пожаловать на kobin.ru!</h1>
+            <p>Выращиваем зерновые и масличные культуры с заботой о земле и будущих поколениях.</p>
+        </div>
+    </section>
+
+    <section class="company-info">
+        <div class="container">
+            <h2>Информация о хозяйстве</h2>
+            <p>ИП Глава крестьянского (фермерского) хозяйства - Кобин Андрей Александрович, ИНН235611724900, 352313, Краснодарский край, Усть\_Лабинский р-н, х.Безлесный, ул. Гагарина, дом 240.</p>
+        </div>
+    </section>
+
+    <section class="partners">
+        <div class="container">
+            <h2>Ключевые партнеры</h2>
+            <div class="partners-logos">
+                <div class="partner-logo">
+                    <img src="{% static 'images/soko_logo.png' %}" alt="СоКо">
+                </div>
+                <div class="partner-logo">
+                    <img src="{% static 'images/agroliga_logo.png' %}" alt="Агролига России">
+                </div>
+                <div class="partner-logo">
+                    <img src="{% static 'images/nczi_logo.png' %}" alt="ФГБНУ 'НЦЗ им. П.П. Лукьяненко'">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="equipment">
+        <div class="container">
+            <h2>Наша техника</h2>
+            <div class="combines-list">
+                <div class="combine-item">
+                    <img src="{% static 'images/combine_vector.png' %}" alt="Комбайн Вектор">
+                    <div class="combine-info">
+                        <h3>Комбайн "Вектор"</h3>
+                        <p>Современный зерноуборочный комбайн, сочетающий в себе высокую производительность и эффективность. Предназначен для уборки различных зерновых культур, обеспечивая качественный обмолот и сепарацию зерна в сложных полевых условиях.</p>
+                    </div>
+                </div>
+                <div class="combine-item">
+                    <img src="{% static 'images/combine_mtz.png' %}" alt="Трактор МТЗ-80">
+                    <div class="combine-info">
+                        <h3>Трактор МТЗ-80</h3>
+                        <p>Надёжный и неприхотливый универсально-пропашной трактор, отлично зарекомендовавший себя в различных сельскохозяйственных работах. Простой в обслуживании и обладающий достаточной мощностью для выполнения широкого спектра задач.</p>
+                    </div>
+                </div>
+                <div class="combine-item">
+                    <img src="{% static 'images/combine_tcm.png' %}" alt="Сеялка ТСМ-8000">
+                    <div class="combine-info">
+                        <h3>Сеялка ТСМ-8000"</h3>
+                        <p>Высокопроизводительная механическая сеялка точного высева, предназначенная для посева пропашных культур. Обеспечивает равномерное распределение семян и точную глубину заделки, что способствует получению дружных всходов и высокого урожая.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-us">
+        <div class="container">
+            <h2>О компании</h2>
+            <p>ООО "СЕЗОН АГРО" - крестьянское (фермерское) хозяйство, специализирующееся на выращивании зерновых и масличных технических культур.</p>
+        </div>
+    </section>
+
+    <section class="science-tech-preview">
+        <div class="container">
+            <h2>Наука и технологии</h2>
+            <p>Открыты к работе и внедрению научных исследований и применению новых технологий.</p>
+            <div class="science-tech-images">
+                <img src="{% static 'images/drones.png' %}" alt="Дроны">
+                <img src="{% static 'images/lab.png' %}" alt="Научная агро лаборатория">
+            </div>
+            <li><a href="{% url 'contact' %}" class="button">Связаться с нами</a></li>
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Intersection Observer for scroll animations
+    const sections = document.querySelectorAll('section');
+
+    const observerOptions = {
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('in-view');
+            }
+        });
+    }, observerOptions);
+
+    sections.forEach(section => {
+        observer.observe(section);
+    });
+
+    // Parallax effect for hero section
+    window.addEventListener('scroll', function() {
+        const scrollPosition = window.pageYOffset;
+        const hero = document.querySelector('.hero');
+
+        if (hero) {
+            hero.style.backgroundPositionY = scrollPosition * 0.5 + 'px';
+        }
+    });
+
+    // Collision effect between sections
+    window.addEventListener('scroll', function() {
+        const scrollPosition = window.pageYOffset;
+        const sections = document.querySelectorAll('section');
+
+        sections.forEach((section, index) => {
+            if (index > 0) {
+                const prevSection = sections[index - 1];
+                const prevSectionBottom = prevSection.offsetTop + prevSection.offsetHeight;
+                const currentSectionTop = section.offsetTop;
+
+                if (scrollPosition > prevSectionBottom - 100 && scrollPosition < currentSectionTop + 100) {
+                    const collisionRatio = 1 - (scrollPosition - (prevSectionBottom - 100)) / 200;
+                    prevSection.style.transform = `translateY(${-50 * collisionRatio}px)`;
+                    section.style.transform = `translateY(${50 * collisionRatio}px)`;
+                } else {
+                    prevSection.style.transform = 'translateY(0)';
+                    section.style.transform = 'translateY(0)';
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Каталог</title>
+    <script src="{% static 'js/cart.js' %}" defer></script>
+</head>
+<body>
+    <div class="product-card">
+        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+        <h3>{{ product.name }}</h3>
+        <p>{{ product.description|truncatechars:100 }}</p>
+        <p class="price">Цена: {{ product.price }} руб.</p>
+
+        <div class="product-details">
+            {% if product.nutrition_facts %}
+                <p><strong>Пищевая ценность:</strong> {{ product.nutrition_facts }}</p>
+            {% endif %}
+            {% if product.storage_conditions %}
+                <p><strong>Условия хранения:</strong> {{ product.storage_conditions }}</p>
+            {% endif %}
+            {% if product.manufacturer_info %}
+                <p><strong>Информация о производителе:</strong> {{ product.manufacturer_info }}</p>
+            {% endif %}
+        </div>
+
+        <button class="add-to-cart" data-product-id="{{ product.id }}">Добавить в корзину</button>
+    </div>
+</body>
+</html>

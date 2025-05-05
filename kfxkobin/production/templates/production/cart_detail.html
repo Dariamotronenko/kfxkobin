@@ -1,0 +1,437 @@
+{% extends 'production/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #6c5ce7;
+        --secondary-color: #a29bfe;
+        --dark-color: #2d3436;
+        --light-color: #f9f9f9;
+        --danger-color: #ff7675;
+        --success-color: #55efc4;
+    }
+
+    .cart-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        padding: 80px 5%;
+        background-color: var(--light-color);
+        min-height: 70vh;
+    }
+
+    .cart-title {
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+        position: relative;
+        color: var(--dark-color);
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+    .cart-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        border-radius: 2px;
+    }
+
+    .cart-empty {
+        text-align: center;
+        padding: 3rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    }
+
+    .cart-empty img {
+        width: 150px;
+        margin-bottom: 1.5rem;
+        opacity: 0.8;
+    }
+
+    .cart-empty h3 {
+        font-size: 1.8rem;
+        color: var(--dark-color);
+        margin-bottom: 1rem;
+    }
+
+    .cart-empty p {
+        color: #666;
+        margin-bottom: 2rem;
+        font-size: 1.1rem;
+    }
+
+    .cart-empty a {
+        display: inline-block;
+        padding: 12px 30px;
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+    }
+
+    .cart-empty a:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
+    }
+
+    .cart-items {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .cart-item {
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        gap: 1.5rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        padding: 1.5rem;
+        align-items: center;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cart-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+    }
+
+    .cart-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+    }
+
+    .cart-item img {
+        width: 100%;
+        height: 120px;
+        border-radius: 8px;
+        object-fit: cover;
+        transition: transform 0.3s;
+    }
+
+    .cart-item:hover img {
+        transform: scale(1.05);
+    }
+
+    .cart-item-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .cart-item-title {
+        font-size: 1.4rem;
+        color: var(--dark-color);
+        font-weight: 600;
+        margin-bottom: 0.2rem;
+    }
+
+    .cart-item-price {
+        font-size: 1.2rem;
+        color: var(--primary-color);
+        font-weight: 700;
+    }
+
+    .cart-item-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 0.5rem;
+    }
+
+    .quantity-control {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .quantity-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--light-color);
+        border: none;
+        color: var(--dark-color);
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .quantity-btn:hover {
+        background: var(--secondary-color);
+        color: white;
+    }
+
+    .quantity-input {
+        width: 50px;
+        text-align: center;
+        padding: 6px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        font-weight: 600;
+    }
+
+    .update-btn {
+        padding: 8px 16px;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+        font-size: 0.9rem;
+    }
+
+    .update-btn:hover {
+        background: var(--secondary-color);
+        transform: translateY(-2px);
+    }
+
+    .remove-btn {
+        padding: 8px 16px;
+        background: var(--danger-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+        font-size: 0.9rem;
+    }
+
+    .remove-btn:hover {
+        background: #e84393;
+        transform: translateY(-2px);
+    }
+
+    .cart-item-total {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--dark-color);
+        margin-top: 0.5rem;
+    }
+
+    .cart-summary {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        align-self: start;
+        position: sticky;
+        top: 20px;
+    }
+
+    .summary-title {
+        font-size: 1.5rem;
+        color: var(--dark-color);
+        margin-bottom: 1.5rem;
+        text-align: center;
+        font-weight: 700;
+    }
+
+    .summary-details {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 1.1rem;
+    }
+
+    .summary-total {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin: 1.5rem 0;
+    }
+
+    .checkout-btn {
+        display: block;
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-align: center;
+        text-decoration: none;
+        box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+    }
+
+    .checkout-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(108, 92, 231, 0.4);
+    }
+
+    .continue-shopping {
+        display: block;
+        text-align: center;
+        margin-top: 1rem;
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s;
+    }
+
+    .continue-shopping:hover {
+        color: var(--secondary-color);
+        text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+        .cart-container {
+            grid-template-columns: 1fr;
+            padding: 60px 5%;
+        }
+
+        .cart-item {
+            grid-template-columns: 100px 1fr;
+        }
+
+        .cart-item-title {
+            font-size: 1.2rem;
+        }
+
+        .cart-item-actions {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="cart-container">
+    <div class="cart-items">
+        <h1 class="cart-title">Ваша корзина</h1>
+
+        {% if cart and cart.items.all %}
+            {% for item in cart.items.all %}
+            <div class="cart-item">
+                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                <div class="cart-item-details">
+                    <h3 class="cart-item-title">{{ item.product.name }}</h3>
+                    <p class="cart-item-price">{{ item.product.price }} ₽</p>
+                    
+                    <form action="{% url 'cart_update_quantity' item.id %}" method="post" class="cart-item-actions">
+                        {% csrf_token %}
+                        <div class="quantity-control">
+                            <button type="button" class="quantity-btn minus" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">-</button>
+                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="quantity-input">
+                            <button type="button" class="quantity-btn plus" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">+</button>
+                        </div>
+                        <button type="submit" class="update-btn">Обновить</button>
+                    </form>
+                    
+                    <p class="cart-item-total">Итого: {{ item.get_total_price }} ₽</p>
+                    
+                    <form action="{% url 'cart_remove' item.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="remove-btn">Удалить из корзины</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="cart-empty">
+                <img src="{% static 'images/empty-cart.png' %}" alt="Пустая корзина">
+                <h3>Ваша корзина пуста</h3>
+                <p>Начните покупки, чтобы добавить товары в корзину</p>
+                <a href="{% url 'product_list' %}">Продолжить покупки</a>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if cart and cart.items.all %}
+    <div class="cart-summary">
+        <h3 class="summary-title">Сумма заказа</h3>
+        
+        <div class="summary-details">
+            <div class="summary-row">
+                <span>Товары ({{ cart.items.count }})</span>
+                <span>{{ cart.get_total_price }} ₽</span>
+            </div>
+            <div class="summary-row">
+                <span>Доставка</span>
+                <span>Бесплатно</span>
+            </div>
+        </div>
+        
+        <div class="summary-row summary-total">
+            <span>Итого:</span>
+            <span>{{ cart.get_total_price }} ₽</span>
+        </div>
+        
+        <a href="{% url 'create_order' %}" class="checkout-btn">Оформить заказ</a>
+        <a href="{% url 'product_list' %}" class="continue-shopping">Продолжить покупки</a>
+    </div>
+    {% endif %}
+</section>
+
+<script>
+    // Добавляем анимацию при изменении количества
+    document.querySelectorAll('.quantity-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            this.parentNode.querySelector('.quantity-input').dispatchEvent(new Event('change'));
+        });
+    });
+
+    // Плавное появление элементов корзины
+    document.addEventListener('DOMContentLoaded', function() {
+        const items = document.querySelectorAll('.cart-item');
+        items.forEach((item, index) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+            item.style.animation = `fadeInUp 0.5s ease forwards ${index * 0.1}s`;
+        });
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    });
+</script>
+{% endblock %}
